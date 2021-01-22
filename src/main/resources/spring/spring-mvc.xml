@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <context:component-scan base-package="ru.khurry.voting.web"/>
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="WEB-INF/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean class="ru.khurry.voting.web.json.JacksonObjectMapper" id="objectMapper" factory-method="getMapper"/>
+
+    <mvc:annotation-driven>
+<!--        conversion-service="conversionService">-->
+<!--        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper" ref="objectMapper"/>
+            </bean>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/plain;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+        <mvc:argument-resolvers>
+            <bean class="org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver "/>
+        </mvc:argument-resolvers>-->
+        <mvc:message-converters>
+<!--            <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>-->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper" ref="objectMapper" />
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+</beans>
