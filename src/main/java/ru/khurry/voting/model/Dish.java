@@ -3,8 +3,6 @@ package ru.khurry.voting.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Currency;
-import java.util.Set;
 
 @Entity
 @Table(name = "dishes")

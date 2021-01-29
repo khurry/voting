@@ -48,7 +48,6 @@ CREATE TABLE users
     FOREIGN KEY (menu_id) REFERENCES menus (id)
 );
 CREATE UNIQUE INDEX users_unique_email_idx ON users (email);
--- CREATE UNIQUE INDEX users_unique_menu_idx ON users (id, menu);
 
 CREATE TABLE user_roles
 (

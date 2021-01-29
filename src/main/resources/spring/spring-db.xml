@@ -4,41 +4,20 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:jee="http://www.springframework.org/schema/jee"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/data/jpa
-       https://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
-
-
-    <context:property-placeholder location="classpath:db/h2.properties" system-properties-mode="OVERRIDE"/>
-
-    <!--
-        For postgres driver logging
-        It uses java.util.logging and logged via jul-to-slf4j bridge
-        https://stackoverflow.com/a/27296470/548473
-    -->
-    <!--    <bean class="org.springframework.beans.factory.config.MethodInvokingBean">-->
-    <!--        <property name="staticMethod" value="org.slf4j.bridge.SLF4JBridgeHandler.install" />-->
-    <!--    </bean>-->
+       https://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
 
     <context:component-scan base-package="ru.khurry.**.repository"/>
 
     <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
         <jdbc:script location="${jdbc.initLocation}"/>
-        <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
+        <jdbc:script location="${jdbc.populateLocation}"/>
     </jdbc:initialize-database>
-
-    <!--no pooling-->
-    <bean id="dataSource"
-          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${datasource.driverClassName}"/>
-        <property name="url" value="${datasource.url}"/>
-        <property name="username" value="${datasource.username}"/>
-        <property name="password" value="${datasource.password}"/>
-    </bean>
 
     <jpa:repositories base-package="ru.khurry.voting.repository"/>
 
@@ -49,8 +28,8 @@
         <property name="jpaPropertyMap">
             <map>
                 <entry key="#{T(org.hibernate.cfg.AvailableSettings).FORMAT_SQL}" value="${hibernate.format_sql}"/>
-                <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SQL_COMMENTS}" value="${hibernate.use_sql_comments}"/>
-                <!--<entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_AUTO}" value="${hibernate.hbm2ddl.auto}"/>-->
+                <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SQL_COMMENTS}"
+                       value="${hibernate.use_sql_comments}"/>
             </map>
         </property>
 
@@ -63,7 +42,22 @@
 
     <tx:annotation-driven/>
 
-<!--    Transaction manager for a single JPA EntityManagerFactory (alternative to JTA)-->
+    <!--    Transaction manager for a single JPA EntityManagerFactory (alternative to JTA)-->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
           p:entityManagerFactory-ref="entityManagerFactory"/>
+
+    <beans profile="prod">
+        <context:property-placeholder location="classpath:/db/tomcat.properties" system-properties-mode="OVERRIDE"/>
+        <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/voting"/>
+    </beans>
+    <beans profile="test">
+        <context:property-placeholder location="classpath:db/h2.properties" system-properties-mode="OVERRIDE"/>
+        <bean id="dataSource"
+              class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+            <property name="driverClassName" value="${datasource.driverClassName}"/>
+            <property name="url" value="${datasource.url}"/>
+            <property name="username" value="${datasource.username}"/>
+            <property name="password" value="${datasource.password}"/>
+        </bean>
+    </beans>
 </beans>

@@ -10,7 +10,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <java.version>15</java.version>
+        <java.version>8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -30,6 +30,8 @@
         <javax-el.version>3.0.1-b12</javax-el.version>
         <h2.version>1.4.200</h2.version>
         <springdata.version>2.3.4.RELEASE</springdata.version>
+        <tomcat.version>9.0.41</tomcat.version>
+
     </properties>
 
     <build>
@@ -56,6 +58,7 @@
         </plugins>
     </build>
 
+
     <dependencies>
         <!-- Logging with SLF4J & LogBack -->
         <dependency>
@@ -63,13 +66,6 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.slf4j</groupId>-->
-<!--            <artifactId>jul-to-slf4j</artifactId>-->
-<!--            <version>${slf4j.version}</version>-->
-<!--            <scope>runtime</scope>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -90,7 +86,7 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
 
-<!--        jackson for responsebody converting-->
+        <!--        jackson for responseBody converting-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -123,7 +119,6 @@
             <version>${springdata.version}</version>
         </dependency>
 
-
         <!--- ORM -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -135,14 +130,6 @@
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate-validator.version}</version>
         </dependency>
-
-        <!--http://hibernate.org/validator/documentation/getting-started/#unified-expression-language-el-->
-<!--        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>${javax-el.version}</version>
-            <scope>provided</scope>
-        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
         <dependency>
@@ -177,7 +164,65 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
+
     </dependencies>
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>1.8.2</version>
+                        <configuration>
+                            <container>
+                                <containerId>tomcat9x</containerId>
+                                <systemProperties>
+                                    <spring.profiles.active>prod</spring.profiles.active>
+                                </systemProperties>
+                                <dependencies>
+                                    <dependency>
+                                        <groupId>com.h2database</groupId>
+                                        <artifactId>h2</artifactId>
+                                    </dependency>
+                                </dependencies>
+                            </container>
+                            <configuration>
+                                <configfiles>
+                                    <configfile>
+                                        <file>src/main/resources/tomcat/context.xml</file>
+                                        <todir>conf/Catalina/localhost/</todir>
+                                        <tofile>${project.build.finalName}.xml</tofile>
+                                    </configfile>
+                                </configfiles>
+                            </configuration>
+                            <deployables>
+                                <deployable>
+                                    <groupId>ru.khurry</groupId>
+                                    <artifactId>voting</artifactId>
+                                    <type>war</type>
+                                    <properties>
+                                        <!--                                <context>${project.build.finalName}</context>-->
+                                    </properties>
+
+                                </deployable>
+                            </deployables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--        <profile>
+                    <id>test</id>
+                </profile>-->
+    </profiles>
     <dependencyManagement>
         <dependencies>
             <dependency>

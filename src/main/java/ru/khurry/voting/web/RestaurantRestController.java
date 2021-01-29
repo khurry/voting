@@ -32,17 +32,18 @@ public class RestaurantRestController {
     public static final LocalTime thresholdTime = LocalTime.of(11, 0);
     public static final String REST_URL = "/restaurants";
 
-    @Autowired
-    private RestaurantRepository restaurantRepository;
+    private final RestaurantRepository restaurantRepository;
+    private final DishRepository dishRepository;
+    private final UserRepository userRepository;
+    private final MenuRepository menuRepository;
 
     @Autowired
-    private DishRepository dishRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
+    public RestaurantRestController(RestaurantRepository restaurantRepository, DishRepository dishRepository, UserRepository userRepository, MenuRepository menuRepository) {
+        this.restaurantRepository = restaurantRepository;
+        this.dishRepository = dishRepository;
+        this.userRepository = userRepository;
+        this.menuRepository = menuRepository;
+    }
 
     @GetMapping
     public List<RestaurantDTO> getAllRestaurants() {

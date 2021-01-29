@@ -5,8 +5,9 @@ import ru.khurry.voting.model.User;
 
 import java.time.LocalDateTime;
 
+@SuppressWarnings("ConstantConditions")
 public class SecurityUtil {
-    private static User user = new User(100012, "UserName", "user@gmail.com", "password", LocalDateTime.now(), Role.USER);
+    private static final User user = new User(100012, "UserName", "user@gmail.com", "password", LocalDateTime.now(), Role.USER);
     public static User getAuthUser() {
         return user;
     }

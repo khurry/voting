@@ -17,24 +17,24 @@ import ru.khurry.voting.repository.MenuRepository;
 import ru.khurry.voting.repository.RestaurantRepository;
 import ru.khurry.voting.repository.UserRepository;
 import ru.khurry.voting.util.DateUtil;
+import ru.khurry.voting.util.NotFoundException;
 import ru.khurry.voting.util.RestaurantUtil;
-import ru.khurry.voting.util.SecurityUtil;
 import ru.khurry.voting.web.json.JsonUtil;
-import ru.khurry.voting.web.testdata.UserTestData;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
+import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.khurry.voting.web.testdata.RestaurantTestData.*;
-import static ru.khurry.voting.web.testdata.UserTestData.*;
+import static ru.khurry.voting.web.testutils.RestaurantTestUtils.*;
+import static ru.khurry.voting.web.testutils.UserTestUtils.user;
 
+@SuppressWarnings("ALL")
 class RestaurantRestControllerTest extends AbstractRestControllerTest {
     private static final String REST_URL = "/restaurants/";
     private static final int RESTAURANT_ID = restaurant1.getId();
@@ -62,7 +62,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
                 .andExpect(result -> {
                     Assertions.assertThat(JsonUtil.readValues(result.getResponse().getContentAsString(), RestaurantDTO.class))
                             .usingElementComparatorIgnoringFields("")
-                            .isEqualTo(List.of(RestaurantUtil.createRestaurantDTO(menu1), RestaurantUtil.createRestaurantDTO(menu3)));
+                            .isEqualTo(Arrays.asList(RestaurantUtil.createRestaurantDTO(menu1), RestaurantUtil.createRestaurantDTO(menu3)));
                 });
     }
 
@@ -85,10 +85,8 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> {
-                    Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), Restaurant.class))
-                            .usingRecursiveComparison().ignoringCollectionOrder().ignoringFields("menus.restaurant", "menus.dishes.menu").isEqualTo(restaurant1);
-                });
+                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), Restaurant.class))
+                        .usingRecursiveComparison().ignoringCollectionOrder().ignoringFields("menus.restaurant", "menus.dishes.menu").isEqualTo(restaurant1));
     }
 
     @Test
@@ -97,10 +95,8 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> {
-                    Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), Dish.class))
-                            .usingRecursiveComparison().ignoringFields("menu").isEqualTo(dish1);
-                });
+                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), Dish.class))
+                        .usingRecursiveComparison().ignoringFields("menu").isEqualTo(dish1));
     }
 
     @Test
@@ -113,14 +109,12 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> {
-                    Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class))
-                            .usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant);
-                });
+                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class))
+                        .usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant));
         User votedUser = new User(user);
         votedUser.setMenu(expectedMenu);
 
-        Assertions.assertThat(userRepository.findById(user.getId()).orElseThrow()).usingRecursiveComparison()
+        Assertions.assertThat(userRepository.findById(user.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
                 .ignoringFields("menu.dishes", "menu.restaurant.menus", "registered").isEqualTo(votedUser);
     }
 
@@ -149,15 +143,13 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> {
-                    Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class))
-                            .usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant);
-                });
+                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class))
+                        .usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant));
 
-        Assertions.assertThat(userRepository.findById(user.getId()).orElseThrow()).usingRecursiveComparison()
+        Assertions.assertThat(userRepository.findById(user.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
                 .ignoringFields("menu.dishes", "menu.restaurant.menus", "registered").isEqualTo(expectedUser);
 
-        Assertions.assertThat(menuRepository.findById(oldMenu.getId()).orElseThrow()).usingRecursiveComparison()
+        Assertions.assertThat(menuRepository.findById(oldMenu.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
                 .ignoringFields("dishes", "restaurant").isEqualTo(oldMenu);
 
         DateUtil.setClock(Clock.systemDefaultZone());
@@ -186,14 +178,12 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> {
-                    Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class))
-                            .usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant);
-                });
-        Assertions.assertThat(userRepository.findById(user.getId()).orElseThrow()).usingRecursiveComparison()
+                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class))
+                        .usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant));
+        Assertions.assertThat(userRepository.findById(user.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
                 .ignoringFields("menu.dishes", "menu.restaurant.menus", "registered").isEqualTo(expectedUser);
 
-        Assertions.assertThat(menuRepository.findById(menu3.getId()).orElseThrow()).usingRecursiveComparison()
+        Assertions.assertThat(menuRepository.findById(menu3.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
                 .ignoringFields("dishes", "restaurant").isNotEqualTo(newMenu);
 
         DateUtil.setClock(Clock.systemDefaultZone());
@@ -258,7 +248,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
                 .content(JsonUtil.writeValue(updatedRestaurant)))
                 .andExpect(status().isNoContent());
 
-        Restaurant actualRestaurant = restaurantRepository.findById(updatedRestaurant.getId()).orElseThrow();
+        Restaurant actualRestaurant = restaurantRepository.findById(updatedRestaurant.getId()).orElseThrow(NotFoundException::new);
         Assertions.assertThat(actualRestaurant).usingRecursiveComparison().ignoringFields("menus.restaurant").isEqualTo(updatedRestaurant);
     }
 
@@ -274,7 +264,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
                 .content(JsonUtil.writeValue(updatedMenu)))
                 .andExpect(status().isNoContent());
 
-        Menu actualMenu = menuRepository.findById(updatedMenu.getId()).orElseThrow();
+        Menu actualMenu = menuRepository.findById(updatedMenu.getId()).orElseThrow(NotFoundException::new);
         Assertions.assertThat(actualMenu).usingRecursiveComparison().ignoringFields("restaurant", "dishes.menu").isEqualTo(updatedMenu);
     }
 
@@ -290,7 +280,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
                 .content(JsonUtil.writeValue(updatedDish)))
                 .andExpect(status().isNoContent());
 
-        Dish actualDish = dishRepository.findById(updatedDish.getId()).orElseThrow();
+        Dish actualDish = dishRepository.findById(updatedDish.getId()).orElseThrow(NotFoundException::new);
         Assertions.assertThat(actualDish).usingRecursiveComparison().ignoringFields("menu").isEqualTo(updatedDish);
     }
 
@@ -300,7 +290,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertTrue(restaurantRepository.findById(RESTAURANT_ID).isEmpty());
+        assertFalse(restaurantRepository.findById(RESTAURANT_ID).isPresent());
     }
 
     @Test
@@ -309,7 +299,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertTrue(menuRepository.findById(MENU_ID).isEmpty());
+        assertFalse(menuRepository.findById(MENU_ID).isPresent());
     }
 
     @Test
@@ -318,6 +308,6 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertTrue(dishRepository.findById(DISH_ID).isEmpty());
+        assertFalse(dishRepository.findById(DISH_ID).isPresent());
     }
 }

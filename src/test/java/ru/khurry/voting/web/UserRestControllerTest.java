@@ -9,18 +9,20 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.khurry.voting.model.Role;
 import ru.khurry.voting.model.User;
 import ru.khurry.voting.repository.UserRepository;
+import ru.khurry.voting.util.NotFoundException;
 import ru.khurry.voting.web.json.JsonUtil;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.khurry.voting.web.testdata.UserTestData.admin;
-import static ru.khurry.voting.web.testdata.UserTestData.user;
+import static ru.khurry.voting.web.testutils.UserTestUtils.admin;
+import static ru.khurry.voting.web.testutils.UserTestUtils.user;
 
+@SuppressWarnings("ConstantConditions")
 public class UserRestControllerTest extends AbstractRestControllerTest {
     @Autowired
     private UserRepository repository;
@@ -34,10 +36,8 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> {
-                    Assertions.assertThat(JsonUtil.readValues(result.getResponse().getContentAsString(), User.class))
-                            .usingElementComparatorIgnoringFields("registered", "menu.restaurant", "menu.dishes").isEqualTo(List.of(user, admin));
-                });
+                .andExpect(result -> Assertions.assertThat(JsonUtil.readValues(result.getResponse().getContentAsString(), User.class))
+                        .usingElementComparatorIgnoringFields("registered", "menu.restaurant", "menu.dishes").isEqualTo(Arrays.asList(user, admin)));
     }
 
     @Test
@@ -46,10 +46,8 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> {
-                    Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), User.class))
-                            .usingRecursiveComparison().ignoringFields("registered", "menu.restaurant", "menu.dishes").isEqualTo(user);
-                });
+                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), User.class))
+                        .usingRecursiveComparison().ignoringFields("registered", "menu.restaurant", "menu.dishes").isEqualTo(user));
     }
 
     @Test
@@ -79,7 +77,7 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
                 .content(JsonUtil.writeValue(updatedUser)))
                 .andExpect(status().isNoContent());
 
-        User actualUser = repository.findById(updatedUser.getId()).orElseThrow();
+        User actualUser = repository.findById(updatedUser.getId()).orElseThrow(NotFoundException::new);
         Assertions.assertThat(actualUser).usingRecursiveComparison().ignoringFields("menu.restaurant", "menu.dishes").isEqualTo(updatedUser);
     }
 
@@ -89,6 +87,6 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
 //                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertTrue(repository.findById(USER_ID).isEmpty());
+        assertFalse(repository.findById(USER_ID).isPresent());
     }
 }

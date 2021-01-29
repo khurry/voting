@@ -6,17 +6,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.khurry.voting.model.Dish;
-import ru.khurry.voting.model.Restaurant;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
 public interface DishRepository extends CrudRepository<Dish, Integer> {
-
-    @Query("from Dish d where d.menu.id = :menuId")
-    List<Dish> findAllById(@Param("menuId") int menuId);
 
     @Query("from Dish d where d.menu.id = :menuId and d.id = :dishId")
     Optional<Dish> findByIdAndMenuId(@Param("menuId") int menuId, @Param("dishId") int dishId);

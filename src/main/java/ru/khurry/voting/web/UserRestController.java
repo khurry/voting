@@ -17,8 +17,12 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserRestController {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public UserRestController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     static final String REST_URL = "/users";
 

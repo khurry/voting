@@ -1,6 +1,7 @@
 package ru.khurry.voting.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -17,6 +18,7 @@ import javax.annotation.PostConstruct;
         "classpath:spring/spring-db.xml"
 })
 @Transactional
+@ActiveProfiles("test")
 public abstract class AbstractRestControllerTest {
 
     private MockMvc mockMvc;

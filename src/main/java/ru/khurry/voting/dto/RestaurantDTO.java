@@ -1,16 +1,8 @@
 package ru.khurry.voting.dto;
 
 import org.springframework.lang.NonNull;
-import ru.khurry.voting.model.Dish;
 import ru.khurry.voting.model.Menu;
 import ru.khurry.voting.model.Restaurant;
-import ru.khurry.voting.model.User;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 public class RestaurantDTO {
     private Integer id;

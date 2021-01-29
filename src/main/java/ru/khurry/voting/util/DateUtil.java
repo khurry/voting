@@ -1,9 +1,6 @@
 package ru.khurry.voting.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class DateUtil {

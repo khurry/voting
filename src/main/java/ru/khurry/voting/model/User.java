@@ -7,6 +7,8 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "users")
@@ -32,7 +34,8 @@ public class User extends AbstractBaseEntity {
     public User() {}
 
     public User(Integer id, String name, String email, String password, LocalDateTime dateTime, Role... roles) {
-        this(id, name, email, password, dateTime, Set.of(roles));
+        this(id, name, email, password, dateTime, Stream.of(roles).collect(Collectors.toSet()));
+
     }
 
     public User(Integer id, String name, String email, String password, LocalDateTime dateTime, Set<Role> roles) {
@@ -51,6 +54,7 @@ public class User extends AbstractBaseEntity {
         this.email = user.email;
         this.password = user.password;
         this.registered = user.registered;
+        this.menu = user.getMenu();
     }
 
     public String getPassword() {
