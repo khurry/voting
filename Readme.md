@@ -1,4 +1,5 @@
-
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/249f5018d21044079b8877f8df3fde59)](https://www.codacy.com/gh/khurry/voting/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=khurry/voting&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/khurry/voting.svg?branch=master)](https://travis-ci.org/khurry/voting)
 
 ### TASK:
 

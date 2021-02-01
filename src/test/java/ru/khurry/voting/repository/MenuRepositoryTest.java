@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import ru.khurry.voting.model.Menu;
-import ru.khurry.voting.util.NotFoundException;
+import ru.khurry.voting.util.exception.NotFoundException;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import static ru.khurry.voting.web.testutils.RestaurantTestUtils.menu3;
 @SuppressWarnings("ConstantConditions")
 class MenuRepositoryTest extends AbstractRepositoryTest {
     @Autowired
-    MenuRepository repository;
+    private MenuRepository repository;
 
     @Test
     void findById() {

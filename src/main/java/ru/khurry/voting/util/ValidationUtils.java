@@ -2,10 +2,12 @@ package ru.khurry.voting.util;
 
 import org.springframework.lang.NonNull;
 import ru.khurry.voting.model.AbstractBaseEntity;
+import ru.khurry.voting.util.exception.IllegalRequestDataException;
+import ru.khurry.voting.util.exception.NotFoundException;
 
 import java.util.Optional;
 
-public class ValidationUtil {
+public class ValidationUtils {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> T checkNotFound(Optional<T> optional) {
         return optional.orElseThrow(NotFoundException::new);

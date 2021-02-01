@@ -4,10 +4,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.khurry.voting.dto.RestaurantDTO;
+import ru.khurry.voting.dto.RestaurantDto;
 import ru.khurry.voting.model.Dish;
 import ru.khurry.voting.model.Menu;
 import ru.khurry.voting.model.Restaurant;
@@ -16,10 +17,11 @@ import ru.khurry.voting.repository.DishRepository;
 import ru.khurry.voting.repository.MenuRepository;
 import ru.khurry.voting.repository.RestaurantRepository;
 import ru.khurry.voting.repository.UserRepository;
-import ru.khurry.voting.util.DateUtil;
-import ru.khurry.voting.util.NotFoundException;
-import ru.khurry.voting.util.RestaurantUtil;
-import ru.khurry.voting.web.json.JsonUtil;
+import ru.khurry.voting.util.DateUtils;
+import ru.khurry.voting.util.RestaurantUtils;
+import ru.khurry.voting.util.UserUtils;
+import ru.khurry.voting.util.exception.NotFoundException;
+import ru.khurry.voting.web.json.JsonUtils;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -32,6 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.khurry.voting.web.testutils.RestaurantTestUtils.*;
+import static ru.khurry.voting.web.testutils.TestUtils.userHttpBasic;
+import static ru.khurry.voting.web.testutils.UserTestUtils.admin;
 import static ru.khurry.voting.web.testutils.UserTestUtils.user;
 
 @SuppressWarnings("ALL")
@@ -53,49 +57,52 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Test
     void getAllRestaurants() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
-//                .with(userHttpBasic(admin)))
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(result -> {
-                    Assertions.assertThat(JsonUtil.readValues(result.getResponse().getContentAsString(), RestaurantDTO.class))
+                    Assertions.assertThat(JsonUtils.readValues(result.getResponse().getContentAsString(), RestaurantDto.class))
                             .usingElementComparatorIgnoringFields("")
-                            .isEqualTo(Arrays.asList(RestaurantUtil.createRestaurantDTO(menu1), RestaurantUtil.createRestaurantDTO(menu3)));
+                            .isEqualTo(Arrays.asList(RestaurantUtils.createRestaurantDTO(menu1), RestaurantUtils.createRestaurantDTO(menu3)));
                 });
     }
 
     @Test
     void getRestaurantWithCurrentMenu() throws Exception {
-        MvcResult result = perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_ID))
-//                .with(userHttpBasic(admin)))
+        MvcResult result = perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_ID)
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)).andReturn();
 
-        RestaurantDTO actualRestaurant = JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class);
-        RestaurantDTO expectedRestaurant = RestaurantUtil.createRestaurantDTO(menu1);
+        RestaurantDto actualRestaurant = JsonUtils.readValue(result.getResponse().getContentAsString(), RestaurantDto.class);
+        RestaurantDto expectedRestaurant = RestaurantUtils.createRestaurantDTO(menu1);
 
         Assertions.assertThat(actualRestaurant).usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant);
     }
 
     @Test
     void getRestaurantWithMenus() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_ID + "/menus"))
-//                .with(userHttpBasic(admin)))
+        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_ID + "/menus")
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), Restaurant.class))
+                .andExpect(result -> Assertions.assertThat(JsonUtils.readValue(result.getResponse().getContentAsString(), Restaurant.class))
                         .usingRecursiveComparison().ignoringCollectionOrder().ignoringFields("menus.restaurant", "menus.dishes.menu").isEqualTo(restaurant1));
     }
 
     @Test
     void getDish() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_ID + "/menus/" + MENU_ID + "/dishes/" + DISH_ID))
-//                .with(userHttpBasic(admin)))
+        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_ID + "/menus/" + MENU_ID + "/dishes/" + DISH_ID)
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), Dish.class))
+                .andExpect(result -> Assertions.assertThat(JsonUtils.readValue(result.getResponse().getContentAsString(), Dish.class))
                         .usingRecursiveComparison().ignoringFields("menu").isEqualTo(dish1));
     }
 
@@ -103,19 +110,19 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
     void voteFirstTime() throws Exception {
         Menu expectedMenu = new Menu(menu1);
         expectedMenu.incrementVoteCount();
-        RestaurantDTO expectedRestaurant = RestaurantUtil.createRestaurantDTO(expectedMenu);
+        RestaurantDto expectedRestaurant = RestaurantUtils.createRestaurantDTO(expectedMenu);
 
-        perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT_ID + "/vote"))
-//                .with(userHttpBasic(admin)))
+        perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT_ID + "/vote")
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class))
+                .andExpect(result -> Assertions.assertThat(JsonUtils.readValue(result.getResponse().getContentAsString(), RestaurantDto.class))
                         .usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant));
         User votedUser = new User(user);
         votedUser.setMenu(expectedMenu);
 
         Assertions.assertThat(userRepository.findById(user.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
-                .ignoringFields("menu.dishes", "menu.restaurant.menus", "registered").isEqualTo(votedUser);
+                .ignoringFields("menu.dishes", "menu.restaurant.menus", "registered", "password").isEqualTo(votedUser);
     }
 
     @Test
@@ -129,21 +136,21 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
         User expectedUser = new User(user);
         expectedUser.setMenu(oldMenu);
 
-        userRepository.save(expectedUser);
+        userRepository.save(UserUtils.prepareToSave(expectedUser, passwordEncoder));
         expectedUser.setMenu(newMenu);
 
-        RestaurantDTO expectedRestaurant = RestaurantUtil.createRestaurantDTO(newMenu);
+        RestaurantDto expectedRestaurant = RestaurantUtils.createRestaurantDTO(newMenu);
 
         LocalDateTime beforeThreshold = LocalDateTime.now().withHour(RestaurantRestController.thresholdTime.minusHours(1).getHour());
         ZoneId zoneId = ZoneId.systemDefault();
 
-        DateUtil.setClock(Clock.fixed(beforeThreshold.atZone(zoneId).toInstant(), ZoneId.systemDefault()));
+        DateUtils.setClock(Clock.fixed(beforeThreshold.atZone(zoneId).toInstant(), ZoneId.systemDefault()));
 
-        perform(MockMvcRequestBuilders.post(REST_URL + restaurant2.getId() + "/vote"))
-//                .with(userHttpBasic(admin)))
+        perform(MockMvcRequestBuilders.post(REST_URL + restaurant2.getId() + "/vote")
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class))
+                .andExpect(result -> Assertions.assertThat(JsonUtils.readValue(result.getResponse().getContentAsString(), RestaurantDto.class))
                         .usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant));
 
         Assertions.assertThat(userRepository.findById(user.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
@@ -152,7 +159,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
         Assertions.assertThat(menuRepository.findById(oldMenu.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
                 .ignoringFields("dishes", "restaurant").isEqualTo(oldMenu);
 
-        DateUtil.setClock(Clock.systemDefaultZone());
+        DateUtils.setClock(Clock.systemDefaultZone());
     }
 
     @Test
@@ -166,19 +173,19 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
         User expectedUser = new User(user);
         expectedUser.setMenu(oldMenu);
-        userRepository.save(expectedUser);
+        userRepository.save(UserUtils.prepareToSave(expectedUser, passwordEncoder));
 
-        RestaurantDTO expectedRestaurant = RestaurantUtil.createRestaurantDTO(oldMenu);
+        RestaurantDto expectedRestaurant = RestaurantUtils.createRestaurantDTO(oldMenu);
 
         LocalDateTime beforeThreshold = LocalDateTime.now().withHour(RestaurantRestController.thresholdTime.plusHours(1).getHour());
         ZoneId zoneId = ZoneId.systemDefault();
-        DateUtil.setClock(Clock.fixed(beforeThreshold.atZone(zoneId).toInstant(), ZoneId.systemDefault()));
+        DateUtils.setClock(Clock.fixed(beforeThreshold.atZone(zoneId).toInstant(), ZoneId.systemDefault()));
 
-        perform(MockMvcRequestBuilders.post(REST_URL + restaurant2.getId() + "/vote"))
-//                .with(userHttpBasic(admin)))
+        perform(MockMvcRequestBuilders.post(REST_URL + restaurant2.getId() + "/vote")
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(result -> Assertions.assertThat(JsonUtil.readValue(result.getResponse().getContentAsString(), RestaurantDTO.class))
+                .andExpect(result -> Assertions.assertThat(JsonUtils.readValue(result.getResponse().getContentAsString(), RestaurantDto.class))
                         .usingRecursiveComparison().ignoringFields("todayMenu.restaurant", "todayMenu.dishes.menu").isEqualTo(expectedRestaurant));
         Assertions.assertThat(userRepository.findById(user.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
                 .ignoringFields("menu.dishes", "menu.restaurant.menus", "registered").isEqualTo(expectedUser);
@@ -186,7 +193,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
         Assertions.assertThat(menuRepository.findById(menu3.getId()).orElseThrow(NotFoundException::new)).usingRecursiveComparison()
                 .ignoringFields("dishes", "restaurant").isNotEqualTo(newMenu);
 
-        DateUtil.setClock(Clock.systemDefaultZone());
+        DateUtils.setClock(Clock.systemDefaultZone());
     }
 
     @Test
@@ -194,12 +201,11 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
         Restaurant newRestaurant = new Restaurant(null, "new rest");
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-//            .with(userHttpBasic(admin))
-//            .content(jsonWithPassword(newUser, "newPass")))
-                .content(JsonUtil.writeValue(newRestaurant)))
+                .with(userHttpBasic(admin))
+                .content(JsonUtils.writeValue(newRestaurant)))
                 .andExpect(status().isCreated());
 
-        Restaurant created = JsonUtil.readValue(action.andReturn().getResponse().getContentAsString(), Restaurant.class);
+        Restaurant created = JsonUtils.readValue(action.andReturn().getResponse().getContentAsString(), Restaurant.class);
         newRestaurant.setId(created.getId());
         Assertions.assertThat(created).usingRecursiveComparison().isEqualTo(newRestaurant);
     }
@@ -210,12 +216,11 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT_ID + "/menus")
                 .contentType(MediaType.APPLICATION_JSON)
-//            .with(userHttpBasic(admin))
-//            .content(jsonWithPassword(newUser, "newPass")))
-                .content(JsonUtil.writeValue(newMenu)))
+            .with(userHttpBasic(admin))
+                .content(JsonUtils.writeValue(newMenu)))
                 .andExpect(status().isCreated());
 
-        Menu created = JsonUtil.readValue(action.andReturn().getResponse().getContentAsString(), Menu.class);
+        Menu created = JsonUtils.readValue(action.andReturn().getResponse().getContentAsString(), Menu.class);
         newMenu.setId(created.getId());
         Assertions.assertThat(created).usingRecursiveComparison().ignoringFields("dishes", "restaurant").isEqualTo(newMenu);
     }
@@ -226,12 +231,11 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT_ID + "/menus/" + MENU_ID + "/dishes")
                 .contentType(MediaType.APPLICATION_JSON)
-//            .with(userHttpBasic(admin))
-//            .content(jsonWithPassword(newUser, "newPass")))
-                .content(JsonUtil.writeValue(newDish)))
+            .with(userHttpBasic(admin))
+                .content(JsonUtils.writeValue(newDish)))
                 .andExpect(status().isCreated());
 
-        Dish created = JsonUtil.readValue(action.andReturn().getResponse().getContentAsString(), Dish.class);
+        Dish created = JsonUtils.readValue(action.andReturn().getResponse().getContentAsString(), Dish.class);
         newDish.setId(created.getId());
         Assertions.assertThat(created).usingRecursiveComparison().ignoringFields("menu").isEqualTo(newDish);
     }
@@ -243,9 +247,8 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-//            .with(userHttpBasic(admin))
-//            .content(jsonWithPassword(newUser, "newPass")))
-                .content(JsonUtil.writeValue(updatedRestaurant)))
+            .with(userHttpBasic(admin))
+                .content(JsonUtils.writeValue(updatedRestaurant)))
                 .andExpect(status().isNoContent());
 
         Restaurant actualRestaurant = restaurantRepository.findById(updatedRestaurant.getId()).orElseThrow(NotFoundException::new);
@@ -259,9 +262,8 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT_ID + "/menus/" + MENU_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-//            .with(userHttpBasic(admin))
-//            .content(jsonWithPassword(newUser, "newPass")))
-                .content(JsonUtil.writeValue(updatedMenu)))
+            .with(userHttpBasic(admin))
+                .content(JsonUtils.writeValue(updatedMenu)))
                 .andExpect(status().isNoContent());
 
         Menu actualMenu = menuRepository.findById(updatedMenu.getId()).orElseThrow(NotFoundException::new);
@@ -275,9 +277,8 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT_ID + "/menus/" + MENU_ID + "/dishes/" + DISH_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-//            .with(userHttpBasic(admin))
-//            .content(jsonWithPassword(newUser, "newPass")))
-                .content(JsonUtil.writeValue(updatedDish)))
+            .with(userHttpBasic(admin))
+                .content(JsonUtils.writeValue(updatedDish)))
                 .andExpect(status().isNoContent());
 
         Dish actualDish = dishRepository.findById(updatedDish.getId()).orElseThrow(NotFoundException::new);
@@ -286,8 +287,8 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
     @Test
     void deleteRestaurant() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_ID))
-//                .with(userHttpBasic(admin)))
+        perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_ID)
+                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(restaurantRepository.findById(RESTAURANT_ID).isPresent());
@@ -295,8 +296,8 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
     @Test
     void deleteMenu() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_ID + "/menus/" + MENU_ID))
-//                .with(userHttpBasic(admin)))
+        perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_ID + "/menus/" + MENU_ID)
+                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(menuRepository.findById(MENU_ID).isPresent());
@@ -304,8 +305,8 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
     @Test
     void deleteDish() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_ID + "/menus/" + MENU_ID + "/dishes/" + DISH_ID))
-//                .with(userHttpBasic(admin)))
+        perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_ID + "/menus/" + MENU_ID + "/dishes/" + DISH_ID)
+                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(dishRepository.findById(DISH_ID).isPresent());

@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.khurry.voting.model.Restaurant;
-import ru.khurry.voting.util.NotFoundException;
+import ru.khurry.voting.util.exception.NotFoundException;
 
 import static ru.khurry.voting.web.testutils.RestaurantTestUtils.restaurant1;
 import static ru.khurry.voting.web.testutils.RestaurantTestUtils.restaurant2;
@@ -12,7 +12,7 @@ import static ru.khurry.voting.web.testutils.RestaurantTestUtils.restaurant2;
 @SuppressWarnings("ConstantConditions")
 class RestaurantRepositoryTest extends AbstractRepositoryTest {
     @Autowired
-    RestaurantRepository repository;
+    private RestaurantRepository repository;
 
     @Test
     void findAll() {

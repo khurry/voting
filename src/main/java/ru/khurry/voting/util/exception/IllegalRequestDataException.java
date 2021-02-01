@@ -1,4 +1,4 @@
-package ru.khurry.voting.util;
+package ru.khurry.voting.util.exception;
 
 public class IllegalRequestDataException extends RuntimeException {
     public IllegalRequestDataException(String msg) {

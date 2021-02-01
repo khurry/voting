@@ -5,6 +5,10 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,15 +24,25 @@ public class User extends AbstractBaseEntity {
     private Set<Role> roles;
 
     @JsonIgnore
-//    @ManyToOne(fetch = FetchType.LAZY)
     @ManyToOne
     @JoinColumn(name = "menu_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Menu menu;
 
+    @NotBlank
+    @Size(min = 2, max = 100)
     private String name;
+
+    @Email
+    @NotBlank
+    @Size(max = 100)
     private String email;
+
+    @NotBlank
+    @Size(min = 5, max = 100)
     private String password;
+
+    @NotNull
     private LocalDateTime registered;
 
     public User() {}

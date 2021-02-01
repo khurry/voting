@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static ru.khurry.voting.web.json.JacksonObjectMapper.getMapper;
 
-public class JsonUtil {
+public class JsonUtils {
 
     public static <T> List<T> readValues(String json, Class<T> clazz) {
         ObjectReader reader = getMapper().readerFor(clazz);

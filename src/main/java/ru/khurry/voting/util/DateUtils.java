@@ -3,12 +3,12 @@ package ru.khurry.voting.util;
 import java.time.Clock;
 import java.time.LocalTime;
 
-public class DateUtil {
+public class DateUtils {
 //    @Autowired
     private static Clock clock = Clock.systemDefaultZone();
 
     public static void setClock(Clock clock) {
-        DateUtil.clock = clock;
+        DateUtils.clock = clock;
     }
 
     public static boolean isAfter(LocalTime thresholdTime) {

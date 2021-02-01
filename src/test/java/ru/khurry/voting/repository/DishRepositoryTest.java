@@ -5,12 +5,12 @@ import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguratio
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.khurry.voting.model.Dish;
-import ru.khurry.voting.util.NotFoundException;
+import ru.khurry.voting.util.exception.NotFoundException;
 import ru.khurry.voting.web.testutils.RestaurantTestUtils;
 
 class DishRepositoryTest extends AbstractRepositoryTest{
     @Autowired
-    DishRepository repository;
+    private DishRepository repository;
 
     @SuppressWarnings("ConstantConditions")
     @Test
