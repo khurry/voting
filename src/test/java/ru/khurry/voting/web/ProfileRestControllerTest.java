@@ -11,6 +11,7 @@ import ru.khurry.voting.model.User;
 import ru.khurry.voting.repository.UserRepository;
 import ru.khurry.voting.util.exception.NotFoundException;
 import ru.khurry.voting.web.json.JsonUtils;
+import ru.khurry.voting.web.testutils.UserTestUtils;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +27,7 @@ class ProfileRestControllerTest extends AbstractRestControllerTest {
     @Autowired
     private UserRepository repository;
 
-    private static final String REST_URL = "/profile/";
+    private static final String REST_URL = "/profile";
     private static final int USER_ID = user.getId();
 
     @Test
@@ -50,10 +51,10 @@ class ProfileRestControllerTest extends AbstractRestControllerTest {
 
     @Test
     void register() throws Exception {
-        User newUser = new User(null, "newUser", "newemail@gmail.com", "pass", LocalDateTime.now(), Role.USER);
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "register")
+        User newUser = new User(null, "newUser", "newemail@gmail.com", "newpassword", LocalDateTime.now(), Role.USER);
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtils.writeValue(newUser)))
+                .content(UserTestUtils.jsonWithPassword(newUser, "newpassword")))
                 .andExpect(status().isCreated());
 
         User created = JsonUtils.readValue(action.andReturn().getResponse().getContentAsString(), User.class);
@@ -69,7 +70,7 @@ class ProfileRestControllerTest extends AbstractRestControllerTest {
         perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(user))
-                .content(JsonUtils.writeValue(updatedUser)))
+                .content(UserTestUtils.jsonWithPassword(updatedUser, "updatedpassword")))
                 .andExpect(status().isNoContent());
 
         User actualUser = repository.findById(updatedUser.getId()).orElseThrow(NotFoundException::new);

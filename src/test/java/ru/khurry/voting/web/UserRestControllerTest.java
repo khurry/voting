@@ -11,6 +11,7 @@ import ru.khurry.voting.model.User;
 import ru.khurry.voting.repository.UserRepository;
 import ru.khurry.voting.util.exception.NotFoundException;
 import ru.khurry.voting.web.json.JsonUtils;
+import ru.khurry.voting.web.testutils.UserTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -53,11 +54,11 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
 
     @Test
     public void create() throws Exception {
-        User newUser = new User(null, "newUser", "newemail@gmail.com", "pass", LocalDateTime.now(), Role.USER);
+        User newUser = new User(null, "newUser", "newemail@gmail.com", "newpassword", LocalDateTime.now(), Role.USER);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
-                .content(JsonUtils.writeValue(newUser)))
+                .content(UserTestUtils.jsonWithPassword(newUser, "newpassword")))
                 .andExpect(status().isCreated());
 
         User created = JsonUtils.readValue(action.andReturn().getResponse().getContentAsString(), User.class);
@@ -73,7 +74,7 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
         perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
-                .content(JsonUtils.writeValue(updatedUser)))
+                .content(UserTestUtils.jsonWithPassword(updatedUser, "newpassword")))
                 .andExpect(status().isNoContent());
 
         User actualUser = repository.findById(updatedUser.getId()).orElseThrow(NotFoundException::new);

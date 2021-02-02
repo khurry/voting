@@ -17,6 +17,7 @@ import ru.khurry.voting.repository.DishRepository;
 import ru.khurry.voting.repository.MenuRepository;
 import ru.khurry.voting.repository.RestaurantRepository;
 import ru.khurry.voting.repository.UserRepository;
+import ru.khurry.voting.service.RestaurantService;
 import ru.khurry.voting.util.DateUtils;
 import ru.khurry.voting.util.RestaurantUtils;
 import ru.khurry.voting.util.UserUtils;
@@ -141,7 +142,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
         RestaurantDto expectedRestaurant = RestaurantUtils.createRestaurantDTO(newMenu);
 
-        LocalDateTime beforeThreshold = LocalDateTime.now().withHour(RestaurantRestController.thresholdTime.minusHours(1).getHour());
+        LocalDateTime beforeThreshold = LocalDateTime.now().withHour(RestaurantService.thresholdTime.minusHours(1).getHour());
         ZoneId zoneId = ZoneId.systemDefault();
 
         DateUtils.setClock(Clock.fixed(beforeThreshold.atZone(zoneId).toInstant(), ZoneId.systemDefault()));
@@ -177,7 +178,7 @@ class RestaurantRestControllerTest extends AbstractRestControllerTest {
 
         RestaurantDto expectedRestaurant = RestaurantUtils.createRestaurantDTO(oldMenu);
 
-        LocalDateTime beforeThreshold = LocalDateTime.now().withHour(RestaurantRestController.thresholdTime.plusHours(1).getHour());
+        LocalDateTime beforeThreshold = LocalDateTime.now().withHour(RestaurantService.thresholdTime.plusHours(1).getHour());
         ZoneId zoneId = ZoneId.systemDefault();
         DateUtils.setClock(Clock.fixed(beforeThreshold.atZone(zoneId).toInstant(), ZoneId.systemDefault()));
 

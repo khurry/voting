@@ -1,46 +1,35 @@
 package ru.khurry.voting.web;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.khurry.voting.model.User;
-import ru.khurry.voting.repository.UserRepository;
-import ru.khurry.voting.util.UserUtils;
-import ru.khurry.voting.util.ValidationUtils;
+import ru.khurry.voting.service.UserService;
 
 import java.util.List;
 
 public class AbstractUserRestController {
-    protected final UserRepository userRepository;
 
-    protected final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
-    public AbstractUserRestController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public AbstractUserRestController(UserService userService) {
+        this.userService = userService;
     }
 
     public List<User> getAll() {
-        return userRepository.findAll();
+        return userService.getAll();
     }
 
     public User getUser(int id) {
-        return ValidationUtils.checkNotFound(userRepository.findById(id));
+        return userService.getUser(id);
     }
 
     public User create(User user) {
-        return prepareAndSave(user);
+        return userService.create(user);
     }
 
     public void update(int id, User user) {
-        ValidationUtils.checkConsistentId(id, user);
-        prepareAndSave(user);
+        userService.update(id, user);
     }
 
     public void delete(int id) {
-        userRepository.deleteById(id);
+        userService.delete(id);
     }
-
-    private User prepareAndSave(User user) {
-        return userRepository.save(UserUtils.prepareToSave(user, passwordEncoder));
-    }
-
 }

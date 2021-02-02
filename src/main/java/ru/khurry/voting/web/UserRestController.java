@@ -2,6 +2,7 @@ package ru.khurry.voting.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.khurry.voting.model.User;
 import ru.khurry.voting.repository.UserRepository;
+import ru.khurry.voting.service.UserService;
 import ru.khurry.voting.web.security.AuthorizedUser;
 
 import javax.validation.Valid;
@@ -19,12 +21,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping(UserRestController.REST_URL)
-public class UserRestController extends AbstractUserRestController implements UserDetailsService {
+public class UserRestController extends AbstractUserRestController {
     public static final String REST_URL = "/users";
 
     @Autowired
-    public UserRestController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        super(userRepository, passwordEncoder);
+    public UserRestController(UserService userService) {
+        super(userService);
     }
 
     @GetMapping
@@ -37,7 +39,7 @@ public class UserRestController extends AbstractUserRestController implements Us
         return super.getUser(id);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createWithResponse(@RequestBody @Valid User user) {
         User newUser = super.create(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -46,7 +48,7 @@ public class UserRestController extends AbstractUserRestController implements Us
         return ResponseEntity.created(uriOfNewResource).body(newUser);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}",  consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable int id, @RequestBody @Valid User user) {
         super.update(id, user);
@@ -58,12 +60,4 @@ public class UserRestController extends AbstractUserRestController implements Us
         super.delete(id);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.getByEmail(email.toLowerCase());
-        if (user == null) {
-            throw new UsernameNotFoundException("User " + email + " is not found");
-        }
-        return new AuthorizedUser(user);
-    }
 }

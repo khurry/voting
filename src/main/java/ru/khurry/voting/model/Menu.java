@@ -14,15 +14,12 @@ public class Menu extends AbstractBaseEntity {
     @NotNull
     private LocalDate created;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
     @ManyToOne
-//    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     @JsonIgnore
     private Restaurant restaurant;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "menu")
-//    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Dish> dishes;
 
     @Column(name = "votecount")

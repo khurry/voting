@@ -4,6 +4,8 @@ import org.springframework.lang.NonNull;
 import ru.khurry.voting.model.Menu;
 import ru.khurry.voting.model.Restaurant;
 
+import javax.validation.constraints.NotNull;
+
 public class RestaurantDto {
     private Integer id;
     private String name;
@@ -11,7 +13,7 @@ public class RestaurantDto {
 
     public RestaurantDto() {}
 
-    public RestaurantDto(@NonNull Restaurant restaurant, Menu todayMenu) {
+    public RestaurantDto(@NotNull Restaurant restaurant, Menu todayMenu) {
         this.id = restaurant.getId();
         this.name = restaurant.getName();
         this.todayMenu = todayMenu;

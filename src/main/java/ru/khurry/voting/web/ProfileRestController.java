@@ -5,11 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.khurry.voting.model.User;
-import ru.khurry.voting.repository.UserRepository;
+import ru.khurry.voting.service.UserService;
 import ru.khurry.voting.web.security.AuthorizedUser;
 
 import javax.validation.Valid;
@@ -18,11 +17,11 @@ import java.net.URI;
 @RestController
 @RequestMapping(value = ProfileRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileRestController extends AbstractUserRestController {
-    static final String REST_URL = "/profile";
+    public static final String REST_URL = "/profile";
 
     @Autowired
-    public ProfileRestController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        super(userRepository, passwordEncoder);
+    public ProfileRestController(UserService userService) {
+        super(userService);
     }
 
     @GetMapping

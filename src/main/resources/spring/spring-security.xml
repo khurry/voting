@@ -8,9 +8,12 @@
 
     <http pattern="/**" use-expressions="true" name="restSecurityFilterChain" create-session="stateless" entry-point-ref="restBasicAuthEntryPoint">
         <http-basic/>
-        <intercept-url pattern="/users/**" access="hasRole('ADMIN')"/>
+<!--        <intercept-url pattern="/users/**" access="hasRole('ADMIN')"/>-->
         <intercept-url pattern="/profile/register" access="isAnonymous()"/>
-        <intercept-url pattern="/**" access="isAuthenticated()"/>
+        <intercept-url pattern="/profile" access="isAuthenticated()"/>
+        <intercept-url pattern="/restaurants/**" method="GET" access="isAuthenticated()"/>
+        <intercept-url pattern="/restaurants/*/vote" method="POST" access="isAuthenticated()"/>
+        <intercept-url pattern="/**" access="hasRole('ADMIN')"/>
         <csrf disabled="true"/>
     </http>
 
@@ -18,7 +21,7 @@
                 factory-method="createDelegatingPasswordEncoder"/>
 
     <authentication-manager>
-        <authentication-provider user-service-ref="userRestController">
+        <authentication-provider user-service-ref="userService">
             <password-encoder ref="passwordEncoder"/>
         </authentication-provider>
     </authentication-manager>

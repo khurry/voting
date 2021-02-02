@@ -1,0 +1,655 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1251">
+<meta name=ProgId content=Excel.Sheet>
+<meta name=Generator content="Microsoft Excel 15">
+<link id=Main-File rel=Main-File href="../votingAPI.htm">
+<link rel=File-List href=filelist.xml>
+<link rel=Stylesheet href=stylesheet.css>
+<style>
+<!--table
+	{mso-displayed-decimal-separator:"\,";
+	mso-displayed-thousand-separator:" ";}
+@page
+	{margin:.75in .7in .75in .7in;
+	mso-header-margin:.3in;
+	mso-footer-margin:.3in;
+	mso-page-orientation:landscape;}
+-->
+</style>
+<![if !supportTabStrip]><script language="JavaScript">
+<!--
+function fnUpdateTabs()
+ {
+  if (parent.window.g_iIEVer>=4) {
+   if (parent.document.readyState=="complete"
+    && parent.frames['frTabs'].document.readyState=="complete")
+   parent.fnSetActiveSheet(1);
+  else
+   window.setTimeout("fnUpdateTabs();",150);
+ }
+}
+
+if (window.name!="frSheet")
+ window.location.replace("../votingAPI.htm");
+else
+ fnUpdateTabs();
+//-->
+</script>
+<![endif]>
+</head>
+
+<body link="#0563C1" vlink="#954F72" class=xl77>
+
+<table border=0 cellpadding=0 cellspacing=0 width=1862 style='border-collapse:
+ collapse;table-layout:fixed;width:1399pt'>
+ <col class=xl77 width=377 style='mso-width-source:userset;mso-width-alt:13787;
+ width:283pt'>
+ <col class=xl77 width=51 style='mso-width-source:userset;mso-width-alt:1865;
+ width:38pt'>
+ <col class=xl77 width=90 style='mso-width-source:userset;mso-width-alt:3291;
+ width:68pt'>
+ <col class=xl77 width=73 style='mso-width-source:userset;mso-width-alt:2669;
+ width:55pt'>
+ <col class=xl77 width=61 style='mso-width-source:userset;mso-width-alt:2230;
+ width:46pt'>
+ <col class=xl77 width=118 style='mso-width-source:userset;mso-width-alt:4315;
+ width:89pt'>
+ <col class=xl77 width=98 style='mso-width-source:userset;mso-width-alt:3584;
+ width:74pt'>
+ <col class=xl77 width=212 style='mso-width-source:userset;mso-width-alt:7753;
+ width:159pt'>
+ <col class=xl77 width=462 style='mso-width-source:userset;mso-width-alt:16896;
+ width:347pt'>
+ <col class=xl77 width=64 span=5 style='width:48pt'>
+ <tr height=48 style='mso-height-source:userset;height:36.0pt'>
+  <td height=48 class=xl81 width=377 style='height:36.0pt;width:283pt'>URL</td>
+  <td class=xl82 width=51 style='width:38pt'>Request<br>
+    type</td>
+  <td class=xl82 width=90 style='width:68pt'>Path <br>
+    variables</td>
+  <td class=xl81 width=73 style='width:55pt'>Body Data</td>
+  <td class=xl82 width=61 style='width:46pt'>Response <br>
+    Code</td>
+  <td class=xl82 width=118 style='width:89pt'>Response <br>
+    Type</td>
+  <td class=xl82 width=98 style='width:74pt'>Security <br>
+    level</td>
+  <td class=xl82 width=212 style='width:159pt'>Description</td>
+  <td class=xl82 width=462 style='width:347pt'>CURL <br>
+    command</td>
+  <td class=xl80 width=64 style='width:48pt'></td>
+  <td class=xl80 width=64 style='width:48pt'></td>
+  <td class=xl80 width=64 style='width:48pt'></td>
+  <td class=xl77 width=64 style='width:48pt'></td>
+  <td class=xl77 width=64 style='width:48pt'></td>
+ </tr>
+ <tr height=34 style='height:25.5pt'>
+  <td height=34 class=xl81 style='height:25.5pt'>/restaurants</td>
+  <td class=xl81>GET</td>
+  <td class=xl81></td>
+  <td class=xl81></td>
+  <td class=xl81>200</td>
+  <td class=xl81>List&lt;RestaurantDto&gt;</td>
+  <td class=xl81>isAuthenticated</td>
+  <td class=xl81>get all restaurants with today menus</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s
+  http://localhost:8080/voting/restaurants --user user@yandex.ru:password</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl81 style='height:15.0pt'>/restaurants/{id}</td>
+  <td class=xl81>GET</td>
+  <td class=xl81>restaurant id</td>
+  <td class=xl81></td>
+  <td class=xl81>200</td>
+  <td class=xl81>RestaurantDto</td>
+  <td class=xl81>isAuthenticated</td>
+  <td class=xl81>get a restaurant with today menu</td>
+  <td class=xl81 colspan=2 style='mso-ignore:colspan'>curl -s
+  http://localhost:8080/voting/restaurants/100000 --user
+  user@yandex.ru:password</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl81 style='height:15.0pt'>/restaurants/{restaurantId}/menus</td>
+  <td class=xl81>GET</td>
+  <td class=xl81>restaurant id</td>
+  <td class=xl81></td>
+  <td class=xl81>200</td>
+  <td class=xl81>Restaurant</td>
+  <td class=xl81>isAuthenticated</td>
+  <td class=xl81>get all menus of a restaurant (history)</td>
+  <td class=xl81 colspan=3 style='mso-ignore:colspan'>curl -s
+  http://localhost:8080/voting/restaurants/100000/menus --user
+  user@yandex.ru:password</td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/restaurants/{restaurantId}/menus/{menuId}/dishes/{dishId}</td>
+  <td class=xl81>GET</td>
+  <td class=xl82 width=90 style='width:68pt'>restaurant id<br>
+    menu id<br>
+    dish id</td>
+  <td class=xl81></td>
+  <td class=xl81>200</td>
+  <td class=xl81>Dish</td>
+  <td class=xl81>isAuthenticated</td>
+  <td class=xl81>get a dish</td>
+  <td class=xl81 colspan=5 style='mso-ignore:colspan'>curl -s
+  http://localhost:8080/voting/restaurants/100000/menus/100002/dishes/100005
+  --user user@yandex.ru:password</td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/restaurants/{id}/vote</td>
+  <td class=xl81>POST</td>
+  <td class=xl81>restaurant id</td>
+  <td class=xl81></td>
+  <td class=xl81>200</td>
+  <td class=xl81>RestaurantDto</td>
+  <td class=xl81>isAuthenticated</td>
+  <td class=xl81>vote for a restaurant</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X POST -H
+  'Content-Type:application/json'
+  http://localhost:8080/voting/restaurants/100000/vote --user
+  user@yandex.ru:password</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/restaurants</td>
+  <td class=xl81>POST</td>
+  <td class=xl81></td>
+  <td class=xl81>Restaurant</td>
+  <td class=xl81>201</td>
+  <td class=xl81>Restaurant</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>create a restaurant</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X POST -d
+  '{&quot;name&quot; : &quot;new restaurant&quot;}' -H
+  'Content-Type:application/json' http://localhost:8080/voting/restaurants
+  --user admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/restaurants//{restaurantId}/menus</td>
+  <td class=xl81>POST</td>
+  <td class=xl81>restaurant id</td>
+  <td class=xl81>Menu</td>
+  <td class=xl81>201</td>
+  <td class=xl81>Menu</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>create a menu</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X POST -d
+  '{&quot;created&quot; : &quot;2021-02-01&quot;}' -H
+  'Content-Type:application/json'
+  http://localhost:8080/voting/restaurants/100000/menus --user
+  admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=68 style='height:51.0pt'>
+  <td height=68 class=xl81 style='height:51.0pt'>/restaurants/{restaurantId}/menus/{menuId}/dishes</td>
+  <td class=xl81>POST</td>
+  <td class=xl82 width=90 style='width:68pt'>restaurant id<br>
+    menu id</td>
+  <td class=xl81>Dish</td>
+  <td class=xl81>201</td>
+  <td class=xl81>Dish</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>create a dish</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X POST -d
+  '{&quot;name&quot; : &quot;new Dish&quot;, &quot;price&quot; :
+  &quot;1234&quot;}' -H 'Content-Type:application/json'
+  http://localhost:8080/voting/restaurants/100000/menus/100002/dishes --user
+  admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/restaurants/{id}</td>
+  <td class=xl81>PUT</td>
+  <td class=xl81>restaurant id</td>
+  <td class=xl81>Restaurant</td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>update a restaurant</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X PUT -d
+  '{&quot;name&quot; : &quot;updated restaurant&quot;}' -H
+  'Content-Type:application/json'
+  http://localhost:8080/voting/restaurants/100000 --user admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/restaurant/{restaurantId}/menus/{menuId}</td>
+  <td class=xl81>PUT</td>
+  <td class=xl82 width=90 style='width:68pt'>restaurant id<br>
+    menu id</td>
+  <td class=xl81>Menu</td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>update a menu</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X PUT -d
+  '{&quot;created&quot; : &quot;2030-02-01&quot;}' -H
+  'Content-Type:application/json'
+  http://localhost:8080/voting/restaurants/100000/menus/100002 --user
+  admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=68 style='height:51.0pt'>
+  <td height=68 class=xl81 style='height:51.0pt'>/restaurant/{restaurantId}/menus/{menuId}/dishes/{dishId}</td>
+  <td class=xl81>PUT</td>
+  <td class=xl82 width=90 style='width:68pt'>restaurant id<br>
+    menu id<br>
+    dish id</td>
+  <td class=xl81>Dish</td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>update a dish</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X PUT -d
+  '{&quot;name&quot; : &quot;updated Dish&quot;, &quot;price&quot; :
+  &quot;1235&quot;}' -H 'Content-Type:application/json'
+  http://localhost:8080/voting/restaurants/100000/menus/100002/dishes/100005
+  --user admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl81 style='height:15.0pt'>/restaurants/{id}</td>
+  <td class=xl81>DELETE</td>
+  <td class=xl81>restaurant id</td>
+  <td class=xl81></td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>delete a restaurant</td>
+  <td class=xl81 colspan=3 style='mso-ignore:colspan'>curl -s --request DELETE
+  http://localhost:8080/voting/restaurants/100000 --user admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=34 style='height:25.5pt'>
+  <td height=34 class=xl81 style='height:25.5pt'>/restaurant/{restaurantId}/menus/{menuId}</td>
+  <td class=xl81>DELETE</td>
+  <td class=xl82 width=90 style='width:68pt'>restaurant id<br>
+    menu id</td>
+  <td class=xl81></td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>delete a menu</td>
+  <td class=xl81 colspan=5 style='mso-ignore:colspan'>curl -s --request DELETE
+  http://localhost:8080/voting/restaurants/100000/menus/100002 --user
+  admin@gmail.com:admin</td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/restaurant/{restaurantId}/menus/{menuId}/dishes/{dishId}</td>
+  <td class=xl81>DELETE</td>
+  <td class=xl82 width=90 style='width:68pt'>restaurant id<br>
+    menu id<br>
+    dish id</td>
+  <td class=xl81></td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>delete a dish</td>
+  <td class=xl81 colspan=6 style='mso-ignore:colspan'>curl -s --request DELETE
+  http://localhost:8080/voting/restaurants/100000/menus/100002/dishes/100005
+  --user admin@gmail.com:admin</td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl81 style='height:15.0pt'>/users</td>
+  <td class=xl81>GET</td>
+  <td class=xl81></td>
+  <td class=xl81></td>
+  <td class=xl81>200</td>
+  <td class=xl81>List&lt;User&gt;</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>get all users</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s
+  http://localhost:8080/voting/users--user admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=34 style='height:25.5pt'>
+  <td height=34 class=xl81 style='height:25.5pt'>/users/{id}</td>
+  <td class=xl81>GET</td>
+  <td class=xl81>user id</td>
+  <td class=xl81></td>
+  <td class=xl81>200</td>
+  <td class=xl81>User</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>get a user</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s
+  http://localhost:8080/voting/users/100012 --user admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/users</td>
+  <td class=xl81>POST</td>
+  <td class=xl81></td>
+  <td class=xl81>User</td>
+  <td class=xl81>201</td>
+  <td class=xl81>User</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>create a user</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X POST
+  -d'{&quot;name&quot;:&quot;new User&quot;,
+  &quot;email&quot;:&quot;newuser@gmail.com&quot;,
+  &quot;password&quot;:&quot;newuser&quot;}' -H 'Content-Type:application/json'
+  http://localhost:8080/voting/users --user admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/users/{id}</td>
+  <td class=xl81>PUT</td>
+  <td class=xl81>user id</td>
+  <td class=xl81>User</td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>update a user</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X PUT
+  -d'{&quot;name&quot;:&quot;updated User&quot;,
+  &quot;email&quot;:&quot;updateduser@gmail.com&quot;,
+  &quot;password&quot;:&quot;newuser&quot;}' -H 'Content-Type:application/json'
+  http://localhost:8080/voting/users/100012 --user admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl81 style='height:15.0pt'>/users/{id}</td>
+  <td class=xl81>DELETE</td>
+  <td class=xl81>user id</td>
+  <td class=xl81></td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>ADMIN</td>
+  <td class=xl81>delete a user</td>
+  <td class=xl81 colspan=3 style='mso-ignore:colspan'>curl -s --request DELETE
+  http://localhost:8080/voting/users/100013 --user admin@gmail.com:admin</td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl81 style='height:15.0pt'>/profile</td>
+  <td class=xl81>GET</td>
+  <td class=xl81></td>
+  <td class=xl81></td>
+  <td class=xl81>200</td>
+  <td class=xl81>User</td>
+  <td class=xl81>isAuthenticated</td>
+  <td class=xl81>get a profile</td>
+  <td class=xl81>curl -s http://localhost:8080/voting/profile --user
+  user@yandex.ru:password</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl81 style='height:15.0pt'>/profile</td>
+  <td class=xl81>DELETE</td>
+  <td class=xl81></td>
+  <td class=xl81></td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>isAuthenticated</td>
+  <td class=xl81>delete a profile</td>
+  <td class=xl81 colspan=2 style='mso-ignore:colspan'>curl -s --request DELETE
+  http://localhost:8080/voting/profile --user user@yandex.ru:password</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/profile/register</td>
+  <td class=xl81>POST</td>
+  <td class=xl81></td>
+  <td class=xl81></td>
+  <td class=xl81>201</td>
+  <td class=xl81>User</td>
+  <td class=xl81>any</td>
+  <td class=xl81>register<span style='mso-spacerun:yes'> </span></td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X POST
+  -d'{&quot;name&quot;:&quot;new User&quot;,
+  &quot;email&quot;:&quot;newuser@gmail.com&quot;,
+  &quot;password&quot;:&quot;newuser&quot;}' -H 'Content-Type:application/json'
+  http://localhost:8080/voting/profile/register</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=51 style='height:38.25pt'>
+  <td height=51 class=xl81 style='height:38.25pt'>/profile</td>
+  <td class=xl81>PUT</td>
+  <td class=xl81></td>
+  <td class=xl81>User</td>
+  <td class=xl81>204</td>
+  <td class=xl81>void</td>
+  <td class=xl81>isAuthenticated</td>
+  <td class=xl81>update a profile</td>
+  <td class=xl82 width=462 style='width:347pt'>curl -s -X PUT
+  -d'{&quot;name&quot;:&quot;updated User&quot;,
+  &quot;email&quot;:&quot;updateduser@gmail.com&quot;,
+  &quot;password&quot;:&quot;newuser&quot;}' -H 'Content-Type:application/json'
+  http://localhost:8080/voting/profile --user user@yandex.ru:password</td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl80 style='height:15.0pt'></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='page-break-before:always;height:15.0pt'>
+  <td height=20 class=xl80 style='height:15.0pt'></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl80 style='height:15.0pt'></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl80 style='height:15.0pt'></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl80 style='height:15.0pt'></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl80 style='height:15.0pt'></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl80 style='height:15.0pt'></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl80 style='height:15.0pt'></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl80></td>
+  <td class=xl77></td>
+  <td class=xl77></td>
+ </tr>
+ <![if supportMisalignedColumns]>
+ <tr height=0 style='display:none'>
+  <td width=377 style='width:283pt'></td>
+  <td width=51 style='width:38pt'></td>
+  <td width=90 style='width:68pt'></td>
+  <td width=73 style='width:55pt'></td>
+  <td width=61 style='width:46pt'></td>
+  <td width=118 style='width:89pt'></td>
+  <td width=98 style='width:74pt'></td>
+  <td width=212 style='width:159pt'></td>
+  <td width=462 style='width:347pt'></td>
+  <td width=64 style='width:48pt'></td>
+  <td width=64 style='width:48pt'></td>
+  <td width=64 style='width:48pt'></td>
+  <td width=64 style='width:48pt'></td>
+  <td width=64 style='width:48pt'></td>
+ </tr>
+ <![endif]>
+</table>
+
+</body>
+
+</html>
