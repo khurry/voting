@@ -1,6 +1,5 @@
 package ru.khurry.voting.dto;
 
-import org.springframework.lang.NonNull;
 import ru.khurry.voting.model.Menu;
 import ru.khurry.voting.model.Restaurant;
 
@@ -41,14 +40,5 @@ public class RestaurantDto {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Restaurant{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", todayMenu=" + todayMenu +
-                '}';
     }
 }

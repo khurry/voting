@@ -15,10 +15,12 @@ import ru.khurry.voting.repository.UserRepository;
 import ru.khurry.voting.util.DateUtils;
 import ru.khurry.voting.util.RestaurantUtils;
 import ru.khurry.voting.util.SecurityUtils;
-import ru.khurry.voting.util.ValidationUtils;
 
 import java.time.LocalTime;
 import java.util.List;
+
+import static ru.khurry.voting.util.ValidationUtils.checkConsistentId;
+import static ru.khurry.voting.util.ValidationUtils.checkNotFound;
 
 @Service
 public class RestaurantService {
@@ -39,13 +41,12 @@ public class RestaurantService {
 
     @Transactional
     public RestaurantDto vote(int restaurantId) {
-        Menu todayMenu = ValidationUtils.checkNotFound(menuRepository.findByTodayAndRestaurantId(restaurantId));
-        User user = ValidationUtils.checkNotFound(userRepository.findById(SecurityUtils.authUserId()));
-
+        Menu todayMenu = checkNotFound(menuRepository.findByTodayAndRestaurantId(restaurantId));
+        User user = checkNotFound(userRepository.findById(SecurityUtils.authUserId()));
 
         Menu oldMenu = user.getMenu();
         if (oldMenu != null) {
-            if (DateUtils.isAfter(thresholdTime) || oldMenu.equals(todayMenu))
+            if (DateUtils.isAfter(thresholdTime, oldMenu.getCreated()) || oldMenu.equals(todayMenu))
                 return RestaurantUtils.createRestaurantDTO(oldMenu);
             else {
                 oldMenu.decrementVoteCount();
@@ -62,15 +63,15 @@ public class RestaurantService {
     }
 
     public RestaurantDto getRestaurantWithCurrentMenu(int id) {
-        return RestaurantUtils.createRestaurantDTO(ValidationUtils.checkNotFound(menuRepository.findByTodayAndRestaurantId(id)));
+        return RestaurantUtils.createRestaurantDTO(checkNotFound(menuRepository.findByTodayAndRestaurantId(id)));
     }
 
     public Restaurant getRestaurantWithMenus(int restaurantId) {
-        return ValidationUtils.checkNotFound(restaurantRepository.findByIdWithMenus(restaurantId));
+        return checkNotFound(restaurantRepository.findByIdWithMenus(restaurantId));
     }
 
     public Dish getDish(int dishId) {
-        return ValidationUtils.checkNotFound(dishRepository.findById(dishId));
+        return checkNotFound(dishRepository.findById(dishId));
     }
 
 
@@ -80,27 +81,27 @@ public class RestaurantService {
 
     @Transactional
     public Menu createMenu(int restaurantId, Menu menu) {
-        Restaurant restaurant = ValidationUtils.checkNotFound(restaurantRepository.findByIdWithMenus(restaurantId));
+        Restaurant restaurant = checkNotFound(restaurantRepository.findByIdWithMenus(restaurantId));
         menu.setRestaurant(restaurant);
         return menuRepository.save(menu);
     }
 
     @Transactional
     public Dish createDish(int menuId, Dish dish) {
-        Menu menu = ValidationUtils.checkNotFound(menuRepository.findById(menuId));
+        Menu menu = checkNotFound(menuRepository.findById(menuId));
         dish.setMenu(menu);
         return  dishRepository.save(dish);
     }
 
     public void updateRestaurant(int id, Restaurant restaurant) {
-        ValidationUtils.checkConsistentId(id, restaurant);
+        checkConsistentId(id, restaurant);
         restaurantRepository.save(restaurant);
     }
 
     @Transactional
     public void updateMenu(int restaurantId, int menuId, Menu menu) {
-        Restaurant restaurant = ValidationUtils.checkNotFound(restaurantRepository.findById(restaurantId));
-        ValidationUtils.checkConsistentId(menuId, menu);
+        Restaurant restaurant = checkNotFound(restaurantRepository.findById(restaurantId));
+        checkConsistentId(menuId, menu);
         menu.setRestaurant(restaurant);
         menu.setVoteCount(0);
         menuRepository.save(menu);
@@ -108,8 +109,8 @@ public class RestaurantService {
 
     @Transactional
     public void updateDish(int menuId, int dishId, Dish dish) {
-        Menu menu = ValidationUtils.checkNotFound(menuRepository.findById(menuId));
-        ValidationUtils.checkConsistentId(dishId, dish);
+        Menu menu = checkNotFound(menuRepository.findById(menuId));
+        checkConsistentId(dishId, dish);
         menu.setVoteCount(0);
         menuRepository.save(menu);
         dish.setMenu(menu);

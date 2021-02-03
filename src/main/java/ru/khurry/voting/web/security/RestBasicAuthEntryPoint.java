@@ -15,14 +15,11 @@ import java.io.PrintWriter;
 public class RestBasicAuthEntryPoint extends BasicAuthenticationEntryPoint {
 
     @Override
-    public void commence(
-            HttpServletRequest request, HttpServletResponse response, AuthenticationException authEx)
-            throws IOException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authEx) throws IOException {
         response.addHeader("WWW-Authenticate", "Basic realm=" + getRealmName() + "");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         PrintWriter writer = response.getWriter();
-//        writer.println("HTTP Status 401 - " + authEx.getMessage());
-        writer.println(JsonUtils.writeValue(new ErrorInfo(request.getRequestURI(), "Not Authorized")));
+        writer.println(JsonUtils.writeValue(new ErrorInfo(request.getRequestURL().toString(), "Not Authorized")));
     }
     @Override
     public void afterPropertiesSet() {

@@ -10,7 +10,6 @@ import java.util.List;
 @Entity
 @Table(name = "menus")
 public class Menu extends AbstractBaseEntity {
-
     @NotNull
     private LocalDate created;
 

@@ -26,4 +26,4 @@ To provide a link to github repository. It should contain the code, README.md wi
 
 API and CURL commands are described in /doc/API.pdf file
 
-To run the app execute **mvn clean package -DskipTests=true cargo:run -Pprod**
+To run the app execute **mvn clean package -DskipTests=true org.codehaus.cargo:cargo-maven2-plugin:1.8.2:run -Pprod**

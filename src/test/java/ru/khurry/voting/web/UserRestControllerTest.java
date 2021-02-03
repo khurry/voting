@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.khurry.voting.model.Role;
 import ru.khurry.voting.model.User;
 import ru.khurry.voting.repository.UserRepository;
-import ru.khurry.voting.util.exception.NotFoundException;
 import ru.khurry.voting.web.json.JsonUtils;
 import ru.khurry.voting.web.testutils.UserTestUtils;
 
@@ -77,7 +76,7 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
                 .content(UserTestUtils.jsonWithPassword(updatedUser, "newpassword")))
                 .andExpect(status().isNoContent());
 
-        User actualUser = repository.findById(updatedUser.getId()).orElseThrow(NotFoundException::new);
+        User actualUser = repository.findById(updatedUser.getId()).get();
         Assertions.assertThat(actualUser).usingRecursiveComparison().ignoringFields("menu.restaurant", "menu.dishes", "password").isEqualTo(updatedUser);
     }
 

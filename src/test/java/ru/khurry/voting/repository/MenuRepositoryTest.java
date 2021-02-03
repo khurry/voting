@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import ru.khurry.voting.model.Menu;
-import ru.khurry.voting.util.exception.NotFoundException;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ class MenuRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void findById() {
-        Assertions.assertThat(repository.findById(menu1.getId()).orElseThrow(NotFoundException::new))
+        Assertions.assertThat(repository.findById(menu1.getId()).get())
                 .usingRecursiveComparison().ignoringFields("restaurant.menus", "dishes.menu")
                 .isEqualTo(menu1);
     }
@@ -35,7 +34,7 @@ class MenuRepositoryTest extends AbstractRepositoryTest {
     @Test
     void findByTodayAndRestaurantId() {
         Menu expected = menu1;
-        Menu actual = repository.findByTodayAndRestaurantId(menu1.getRestaurant().getId()).orElseThrow(NotFoundException::new);
+        Menu actual = repository.findByTodayAndRestaurantId(menu1.getRestaurant().getId()).get();
 
         Assertions.assertThat(actual)
                 .usingRecursiveComparison()
@@ -48,7 +47,7 @@ class MenuRepositoryTest extends AbstractRepositoryTest {
     void incrementVoteCount() {
         repository.incrementVoteCount(menu1.getId());
         int expected = 1;
-        int actual = repository.findById(menu1.getId()).orElseThrow(NotFoundException::new).getVoteCount();
+        int actual = repository.findById(menu1.getId()).get().getVoteCount();
         Assertions.assertThat(expected).isEqualTo(actual);
     }
 
@@ -59,7 +58,7 @@ class MenuRepositoryTest extends AbstractRepositoryTest {
             repository.incrementVoteCount(menu1.getId());
         }
         repository.decrementVoteCount(menu1.getId());
-        int actual = repository.findById(menu1.getId()).orElseThrow(NotFoundException::new).getVoteCount();
+        int actual = repository.findById(menu1.getId()).get().getVoteCount();
         Assertions.assertThat(expected).isEqualTo(actual);
     }
 

@@ -9,5 +9,3 @@
 target
 *.iml
 .idea/docs/
-db.mv.db
-db.trace.db

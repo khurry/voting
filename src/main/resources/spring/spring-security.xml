@@ -8,7 +8,6 @@
 
     <http pattern="/**" use-expressions="true" name="restSecurityFilterChain" create-session="stateless" entry-point-ref="restBasicAuthEntryPoint">
         <http-basic/>
-<!--        <intercept-url pattern="/users/**" access="hasRole('ADMIN')"/>-->
         <intercept-url pattern="/profile/register" access="isAnonymous()"/>
         <intercept-url pattern="/profile" access="isAuthenticated()"/>
         <intercept-url pattern="/restaurants/**" method="GET" access="isAuthenticated()"/>

@@ -6,6 +6,7 @@ import ru.khurry.voting.model.Restaurant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RestaurantUtils {
     public static RestaurantDto createRestaurantDTO(Menu todayMenu) {
@@ -16,8 +17,8 @@ public class RestaurantUtils {
         List<RestaurantDto> result = new ArrayList<>();
 
         for (Menu todayMenu : todayMenus) {
-            Restaurant restaurant = todayMenu.getRestaurant();
-            if (restaurant != null) result.add(new RestaurantDto(restaurant, todayMenu));
+            Restaurant restaurant = Objects.requireNonNull(todayMenu.getRestaurant());
+            result.add(new RestaurantDto(restaurant, todayMenu));
         }
         return result;
     }

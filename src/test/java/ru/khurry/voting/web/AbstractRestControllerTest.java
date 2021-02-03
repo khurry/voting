@@ -22,7 +22,6 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @Transactional
 @ActiveProfiles("test")
 public abstract class AbstractRestControllerTest {
-
     private MockMvc mockMvc;
 
     @Autowired

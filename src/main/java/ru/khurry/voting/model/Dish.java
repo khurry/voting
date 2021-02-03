@@ -3,11 +3,18 @@ package ru.khurry.voting.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "dishes")
 public class Dish extends AbstractBaseEntity {
+    @NotBlank
+    @Size(max = 100)
     private String name;
+
+    @Min(1)
     private int price;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,14 +60,5 @@ public class Dish extends AbstractBaseEntity {
 
     public void setMenu(Menu menu) {
         this.menu = menu;
-    }
-
-    @Override
-    public String toString() {
-        return "Dish{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                '}';
     }
 }

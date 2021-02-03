@@ -16,7 +16,6 @@ public class Restaurant extends AbstractBaseEntity {
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
-//    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Menu> menus;
 
     public Restaurant() {}
@@ -46,14 +45,5 @@ public class Restaurant extends AbstractBaseEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Restaurant{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-//                ", menus=" + menus +
-                '}';
     }
 }

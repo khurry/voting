@@ -11,12 +11,4 @@ public class ErrorInfo {
         this.url = url;
         this.details = details;
     }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getDetails() {
-        return details;
-    }
 }
